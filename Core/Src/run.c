@@ -139,6 +139,7 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
         Buzzer_KeySound();
 
 		
+	   run_t.RunCommand_Label= POWER_OFF;
 
  
 
@@ -147,14 +148,9 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
 
     case 0x01: // power on
    
-		 if(first_power_on_buzzer ==0){
-		    first_power_on_buzzer ++;
+		Buzzer_KeySound();
 
-		     Buzzer_KeySound();
-
-		 }
-	
-         run_t.RunCommand_Label= POWER_ON;
+		run_t.RunCommand_Label= POWER_ON;
 		
 
 		 
@@ -320,9 +316,9 @@ void RunCommand_MainBoard_Fun(void)
         run_t.gTimer_10s=0;
 	
 		Update_DHT11_Value(); //to message display 
-		HAL_Delay(20);
+		HAL_Delay(3);
 		
-		run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
+	run_t.RunCommand_Label= FAN_CONTINUCE_RUN_ONE_MINUTE;
 
 	break;
 
@@ -339,29 +335,8 @@ void RunCommand_MainBoard_Fun(void)
     
 	     }
 	   run_t.gPower_flag =POWER_OFF;
-	
-
-	   if(run_t.theFirst_input_power_flag < 8){ //input DC the first 
-	   	run_t.theFirst_input_power_flag ++;
-		run_t.gFan_continueRun =0;
-
-	  
-		    Update_DHT11_Value(); //to message display 
-		    HAL_Delay(10);
-
-	   if(run_t.gDht11_humidity==0)
-	          run_t.gDht11_humidity=50;
-		if(run_t.gDht11_temperature==0)	run_t.gDht11_temperature=25;
-		
-    }
-        
-	  
-
-	  
-     
-     //	run_t.RunCommand_Label= 0xff;
-	 
-	break;
+	   run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
+	 break;
 
 	case UPDATE_TO_PANEL_DATA: //3
      if(run_t.gTimer_senddata_panel >30 && run_t.gPower_On==POWER_ON){ //300ms
@@ -376,15 +351,7 @@ void RunCommand_MainBoard_Fun(void)
 
      }
 
-	if(run_t.app_appointment_time_power_on == POWER_ON){
-		run_t.app_appointment_time_power_on ++;
-        SendWifiData_To_PanelTime(run_t.set_timer_timing_value);
-  
-        HAL_Delay(10);
-        sendData_Reference_Data(run_t.gDry,run_t.gPlasma,run_t.gUltrasonic);
-	    
 
-	}
 	
 	 if(run_t.gTimer_ptc_adc_times > 2 ){ //3 minutes 120s
          run_t.gTimer_ptc_adc_times=0;
@@ -399,13 +366,17 @@ void RunCommand_MainBoard_Fun(void)
 	 }
     break;
 
-	case POWER_OFF_NULL:
+	case  FAN_CONTINUCE_RUN_ONE_MINUTE:
+
+	    Fan_ContinueRun_OneMinute_Fun();
 
 	break;
 
+
+
     }
 	
-   Fan_ContinueRun_OneMinute_Fun();
+   
 
 	
 

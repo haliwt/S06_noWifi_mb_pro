@@ -132,24 +132,16 @@ void Decode_Function(void)
 void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
 {
    uint32_t temp;
-   static uint8_t error_usart_flag;
-  
-   if(huart->Instance==USART1){
+  if(huart->Instance==USART1){
     
 
-	  if(run_t.gTimer_usart_error >240){
+	  if(run_t.gTimer_usart_error >6){
 	  	run_t.gTimer_usart_error=0;
-	      __HAL_UART_GET_FLAG(&huart1,UART_FLAG_ORE);//UART_FLAG_NE
-         __HAL_UART_GET_FLAG(&huart1,UART_FLAG_NE); //USART_ISR_FE
-         __HAL_UART_GET_FLAG(&huart1,USART_ISR_FE);
-         if(UART_FLAG_ORE==1 || UART_FLAG_NE==1 ||USART_ISR_FE==1  ||error_usart_flag ==1){
+	    
+       
            __HAL_UART_CLEAR_OREFLAG(&huart1);
-              __HAL_UART_CLEAR_NEFLAG(&huart1);
-               __HAL_UART_CLEAR_FEFLAG(&huart1);
-             error_usart_flag=0;
-          
-      
-          temp = USART1->RDR;
+           
+         	temp = USART1->RDR;
 		 
           
 	       UART_Start_Receive_IT(&huart1,inputBuf,1);
@@ -159,35 +151,8 @@ void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
          }
 	  	}
          
-     
-        
-     if(run_t.process_run_guarantee_flag ==1){
-        run_t.process_run_guarantee_flag=0;
-       run_t.iwdg_feed_success_flag =1;
-       run_t.gTimer_check_iwdg_flag =0;
-       
-      }
-    
-      if(run_t.gTimer_iwdg > 210){
-          run_t.gTimer_iwdg = 0;
-        // SendWifiCmd_To_Order(0xff);
-     }
-     if(run_t.gTimer_check_iwdg_flag >250){
-         run_t.gTimer_check_iwdg_flag=0;
-         if(run_t.iwdg_feed_success_flag==1){
-            run_t.iwdg_feed_success_flag=0;
-            error_usart_flag=0;
-         
-         }
-         else{
-             error_usart_flag=1;
-		    
-         
-         }
-
-      }
-   	}
   }
+  
 
 /********************************************************************************
 	**

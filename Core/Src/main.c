@@ -105,7 +105,7 @@ int main(void)
   MX_ADC1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-  Self_Check_Fain_Init();
+ 
   
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim14);//HAL_TIM_Base_Start(&htim3);
@@ -127,7 +127,9 @@ int main(void)
   
 	
 	Decode_Function();
-    RunCommand_MainBoard_Fun();
+	if(run_t.decodeFlag ==0){
+      RunCommand_MainBoard_Fun();
+	}
 	
    USART1_Cmd_Error_Handler(&huart1);
 	
