@@ -106,6 +106,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
  
+   Self_Check_Fain_Init();
   
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim14);//HAL_TIM_Base_Start(&htim3);
@@ -133,6 +134,7 @@ int main(void)
 	
 	
    USART1_Cmd_Error_Handler(&huart1);
+   USART2_Cmd_Error_Handler(&huart2);
 	
   }
   /* USER CODE END 3 */
@@ -198,9 +200,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
-             __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_OREF);
-       __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_RTOF);//UART_CLEAR_TXFECF
-           __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_TXFECF);
+     
   }
   /* USER CODE END Error_Handler_Debug */
 }

@@ -98,6 +98,7 @@ void MX_USART2_UART_Init(void)
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();
+     
   }
   /* USER CODE BEGIN USART2_Init 2 */
 

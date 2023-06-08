@@ -301,7 +301,7 @@ void RunCommand_MainBoard_Fun(void)
 {
 
    static uint8_t power_just_on,power_off_fan_flag,set_power_on=0xff,set_power_off=0xff;
-   static uint8_t power_on_flag,power_off_flag;
+   static uint8_t power_on_flag,power_off_flag,times;
     if(run_t.buzzer_sound_flag == 1){
 	 	run_t.buzzer_sound_flag = 0;
 	    Buzzer_KeySound();
@@ -316,6 +316,7 @@ void RunCommand_MainBoard_Fun(void)
 		power_just_on =0;
         run_t.gPower_On = POWER_ON;
 		run_t.gTimer_10s=0;
+    
       //  Update_DHT11_Value();
        // HAL_Delay(100);
 
@@ -344,9 +345,15 @@ void RunCommand_MainBoard_Fun(void)
 	 break;
 
 	case UPDATE_TO_PANEL_DATA: //3
-     if(run_t.gTimer_senddata_panel >30 && run_t.gPower_On==POWER_ON){ //300ms
+     if(run_t.gTimer_senddata_panel >40 && run_t.gPower_On==POWER_ON){ //300ms
 	   	    run_t.gTimer_senddata_panel=0;
+	   	    times++;
 	        ActionEvent_Handler();
+	        if(times > 10){
+	        	times=0;
+	          printf("test_data\n");
+
+	       }
 	        
 	 }
 
@@ -354,28 +361,31 @@ void RunCommand_MainBoard_Fun(void)
          run_t.power_on_send_data_flag ++ ;
 		run_t.gTimer_10s=0;
 		Update_DHT11_Value();
-        HAL_Delay(100);
-		printf("send_tem\n");
-        HAL_Delay(100);
+        HAL_Delay(50);
+		//printf("send_tem\n");
+        //HAL_Delay(100);
 
 		 run_t.RunCommand_Label=ADC_UPDATE_DATA;
 
      }
      break;
 
-	 case ADC_UPDATE_DATA:
+	 case ADC_UPDATE_DATA: //4
 
-	
+	  printf("adc_data\n");
 	 if(run_t.gTimer_ptc_adc_times > 2 ){ //3 minutes 120s
          run_t.gTimer_ptc_adc_times=0;
 		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
 	     Judge_PTC_Temperature_Value();
+          printf("adc_d_1\n");
 
 	 }
 
 	 if(run_t.gTimer_fan_adc_times > 1){ //2 minute 180s
 	     run_t.gTimer_fan_adc_times =0;
+         
 	     Self_CheckFan_Handler(ADC_CHANNEL_0,30);
+          printf("adc_d_2\n");
 	 }
 	 else{
 	    run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;

@@ -138,13 +138,16 @@ void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
 	  if(run_t.gTimer_usart_error >48){
 	  	run_t.gTimer_usart_error=0;
 
-         //  __HAL_UART_CLEAR_OREFLAG(&huart1);
+       
          __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_OREF);
 		   __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_RTOF);//UART_CLEAR_TXFECF
            __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_TXFECF);
+           __HAL_UART_CLEAR_IT(&huart1,UART_IT_RXNE);
         
-         	temp = USART1->RDR;
-		 
+          temp=USART1->ISR;
+          temp = USART1->RDR;
+  
+		    
           
 	       UART_Start_Receive_IT(&huart1,inputBuf,1);
           
@@ -154,8 +157,23 @@ void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
 	  	}
          
   }
-  
+void USART2_Cmd_Error_Handler(UART_HandleTypeDef *huart)
+{
+   uint32_t temp;
+  if(huart->Instance==USART2){
+    
 
+	  if(run_t.gTimer_usart_error_2 >37){
+	  	run_t.gTimer_usart_error_2=0;
+
+          __HAL_UART_CLEAR_OREFLAG(&huart2);
+          temp= USART2->RDR;
+		    
+          
+	   }
+	  }
+         
+}
 /********************************************************************************
 	**
 	*Function Name:sendData_Real_TimeHum(uint8_t hum,uint8_t temp)

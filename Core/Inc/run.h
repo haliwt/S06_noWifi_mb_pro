@@ -94,6 +94,7 @@ typedef struct _RUN_T{
   
     uint8_t decodeFlag;
     uint8_t power_on_send_data_flag;
+    uint8_t gTimer_usart_error_2;
 
  
  
