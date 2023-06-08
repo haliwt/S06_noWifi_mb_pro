@@ -37,7 +37,7 @@ volatile uint8_t usart2_transOngoingFlag;
 *******************************************************************************/
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    static uint8_t state,wr_flag;
+    static uint8_t state;
  
 
 	if(huart->Instance==USART1)//if(huart==&huart1) // Motor Board receive data (filter)
@@ -47,45 +47,37 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		{
 		case 0:  //#0
 			if(inputBuf[0] == 'T')  //hex :54 - "T" -fixed
-
-			    wr_flag =0;
 				state=1; //=1
+            else
+                state=0;
 		break;
 		case 1: //#1
-             if(inputBuf[0] == 'K' || inputBuf[0]=='O' || inputBuf[0]=='R')  {//hex :4B - "K" -fixed
-                if(inputBuf[0]=='O' || inputBuf[0]=='R'){
-                       inputCmd[0]= inputBuf[0];
-					   wr_flag=1;
-					   
-				}
+             if(inputBuf[0] == 'K')  {//hex :4B - "K" -fixed
+               
 				state=2; //=1
 
              }
 			else{
-			   wr_flag =0;
 			   state =0;
 			}
 			break;
             
         case 2:
-			 if(wr_flag == 1){
-			    inputCmd[1]= inputBuf[0];
+			 if(inputBuf[0] == 'P' || inputBuf[0] == 'C' ||inputBuf[0] == 'Z'){
+			    inputCmd[0]= inputBuf[0];
+				 state =3;
 
 			 }
 			 else
-             	inputCmd[0]= inputBuf[0];
-             state = 3;
+                 state =0;
         
         break;
         
         case 3:
-		     if(wr_flag ==1){
-	           inputCmd[2]= inputBuf[0];
-		     }
-			 else
-			  inputCmd[1]= inputBuf[0];
-			 
-	         run_t.decodeFlag =1;
+		    
+	        inputCmd[1]= inputBuf[0];
+	        printf("rx_p=%d\n",inputBuf[0]);
+		     run_t.decodeFlag =1;
 			 
 	         state = 0;
         

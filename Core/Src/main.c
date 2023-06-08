@@ -130,11 +130,11 @@ int main(void)
 	
 	Decode_Function();
 
-      RunCommand_MainBoard_Fun();
+    RunCommand_MainBoard_Fun();
 	
 	
    USART1_Cmd_Error_Handler(&huart1);
-   USART2_Cmd_Error_Handler(&huart2);
+  // USART2_Cmd_Error_Handler(&huart2);
 	
   }
   /* USER CODE END 3 */

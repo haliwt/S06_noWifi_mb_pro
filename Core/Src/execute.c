@@ -8,19 +8,23 @@
 #include "esp8266.h"
 #include "buzzer.h"
 
-uint8_t set_power_off=0;
+
 
 void SetPowerOn_ForDoing(void)
 {
 
-    set_power_off=0;
-    run_t.gPower_On=POWER_ON;
+  
+   run_t.gPower_On=POWER_ON;
 	run_t.open_fan_works_flag++;
      //FAN_CCW_RUN();
-		Fan_Run_Fun();
-	    PLASMA_SetHigh(); //
-	    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);//ultrasnoic ON 
-	    PTC_SetHigh(); //bug is be detect 2023.04.30
+	run_t.gFan = 1;
+   run_t.gDry = 1;
+	run_t.gPlasma =1;       //"杀菌"
+	run_t.gUltrasonic = 1; // "驱虫"
+		// Fan_Run_Fun();
+	 //    PLASMA_SetHigh(); //
+	 //    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);//ultrasnoic ON 
+	 //    PTC_SetHigh(); //bug is be detect 2023.04.30
     
    
 	
@@ -42,16 +46,11 @@ void SetPowerOff_ForDoing(void)
 	run_t.gUltrasonic = 0; // "驱虫"
 	
 	
-    if(set_power_off==0){
-		set_power_off++;
 	PLASMA_SetLow(); //
 	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);//ultrasnoic Off 
 	PTC_SetLow();
 	 //input ac power be detect fan default 
 	FAN_Stop();
-		
-	
-    }
 
 }
 

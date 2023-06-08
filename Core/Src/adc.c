@@ -21,10 +21,11 @@
 #include "adc.h"
 
 /* USER CODE BEGIN 0 */
+#include <stdio.h>
 #include "buzzer.h"
 #include "run.h"
 #include "fan.h"
-
+#include "usart.h"
 #include "cmd_link.h"
 #include "publish.h"
 #include "delay.h"
@@ -233,7 +234,7 @@ void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
          first ++ ;
          run_t.ptc_temp_voltage = 500;
     }
-   
+    printf("ptc= %d",run_t.ptc_temp_voltage);
 }
 
 
@@ -286,8 +287,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 	if(run_t.fan_detect_voltage >800 &&  run_t.fan_detect_voltage < 1400){
            detect_error_times=0;
            run_t.alarm_call = 0x00 ;  //fan is run OK
-
-	       HAL_Delay(200);
+           printf("adc= %d",run_t.fan_detect_voltage);
 
     }
 	else{

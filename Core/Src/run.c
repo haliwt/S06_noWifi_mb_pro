@@ -1,15 +1,13 @@
 #include "run.h"
-
+#include <stdio.h>
+#include "usart.h"
 #include "dht11.h"
 #include "fan.h"
 #include "tim.h"
 #include "cmd_link.h"
 #include "buzzer.h"
-
-
 #include "flash.h"
 #include "execute.h"
-
 #include "adc.h"
 #include "self_check.h"
 
@@ -317,8 +315,7 @@ void RunCommand_MainBoard_Fun(void)
         run_t.gPower_On = POWER_ON;
 		run_t.gTimer_10s=0;
     
-      //  Update_DHT11_Value();
-       // HAL_Delay(100);
+     	SetPowerOn_ForDoing();
 
 		
 	run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
@@ -326,20 +323,15 @@ void RunCommand_MainBoard_Fun(void)
 	break;
 
     case POWER_OFF: //2
+	     run_t.gPower_On = POWER_OFF;
 		 run_t.power_on_send_data_flag=0;
 
-         Answering_Signal_USART1_Handler(COMMAND_ID,   ANSWER_POWER_OFF);
-         HAL_Delay(200);
-		SetPowerOff_ForDoing();
-
-	     if(power_off_fan_flag==0){
-		 	power_off_fan_flag++;
-            run_t.fan_set_level=5;
-     
-           run_t.gFan_counter =0;
-		   run_t.gFan_continueRun =1;
+       
+		//SetPowerOff_ForDoing();
+		run_t.gFan_counter =0;
+		run_t.gFan_continueRun =1;
     
-	     }
+	
 	
 	   run_t.RunCommand_Label= FAN_CONTINUCE_RUN_ONE_MINUTE;
 	 break;
@@ -349,35 +341,28 @@ void RunCommand_MainBoard_Fun(void)
 	   	    run_t.gTimer_senddata_panel=0;
 	   	    times++;
 	        ActionEvent_Handler();
+	       #if DEBUG
 	        if(times > 10){
 	        	times=0;
 	          printf("test_data\n");
 
 	       }
+	       #endif 
 	        
 	 }
 
 	if((run_t.gTimer_10s>34 && run_t.gPower_On == POWER_ON)|| run_t.power_on_send_data_flag < 2){
          run_t.power_on_send_data_flag ++ ;
-		run_t.gTimer_10s=0;
-		Update_DHT11_Value();
-        HAL_Delay(50);
-		//printf("send_tem\n");
-        //HAL_Delay(100);
-
-		 run_t.RunCommand_Label=ADC_UPDATE_DATA;
-
-     }
-     break;
-
-	 case ADC_UPDATE_DATA: //4
-
-	  printf("adc_data\n");
-	 if(run_t.gTimer_ptc_adc_times > 2 ){ //3 minutes 120s
+		    run_t.gTimer_10s=0;
+		    Update_DHT11_Value();
+        HAL_Delay(10);
+    }
+    
+   if(run_t.gTimer_ptc_adc_times > 2 ){ //3 minutes 120s
          run_t.gTimer_ptc_adc_times=0;
 		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
 	     Judge_PTC_Temperature_Value();
-          printf("adc_d_1\n");
+         
 
 	 }
 
@@ -385,31 +370,24 @@ void RunCommand_MainBoard_Fun(void)
 	     run_t.gTimer_fan_adc_times =0;
          
 	     Self_CheckFan_Handler(ADC_CHANNEL_0,30);
-          printf("adc_d_2\n");
+         
 	 }
-	 else{
-	    run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
-
-
-	 }
+	
     break;
 
 	case  FAN_CONTINUCE_RUN_ONE_MINUTE:
 
+	     if(power_off_fan_flag==0){
+		 	power_off_fan_flag++;
+			SetPowerOff_ForDoing();
+            Answering_Signal_USART1_Handler(COMMAND_ID,ANSWER_POWER_OFF);
+     
+		 }
+
 	    Fan_ContinueRun_OneMinute_Fun();
 
 	break;
-
-
-
-    }
-	
-   
-
-	
-
- 
-		
+	}
 	
 }
 

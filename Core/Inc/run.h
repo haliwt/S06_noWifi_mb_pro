@@ -5,6 +5,8 @@
 #define WIFI_TUYA      1  //
 #define AI_ENABLE      1
 
+#define DEBUG           0
+
 typedef enum {                   /* enumeration for CProcess signals */
     kill =1,notkill,dry,notdry,ai,notai
 }Signal;
