@@ -204,15 +204,7 @@ void Update_DHT11_Value(void)
     
 }
 
-void Update_Dht11_Totencent_Value(void)
-{
 
-
-	Dht11_Read_TempHumidity_Handler(&DHT11);
-
-//	MqttData_Publis_ReadTempHum(run_t.gDht11_temperature,run_t.gDht11_humidity);
-
-}
 
 
 

@@ -50,7 +50,7 @@ void Decode_RunCmd(void)
       
 
 	  case 'W': //wifi-function
-	      if(run_t.gPower_flag==POWER_ON){
+	      if(run_t.gPower_On==POWER_ON){
 	      if(cmdType_2==1){//long press key that power key
               //fast blink led for link to tencent cloud
             
@@ -63,7 +63,7 @@ void Decode_RunCmd(void)
 	   break;
         
       case 'C':
-           if(run_t.gPower_flag==POWER_ON){
+           if(run_t.gPower_On==POWER_ON){
               Single_Command_ReceiveCmd(cmdType_2); //Single_ReceiveCmd(cmdType_2); 
               
            }
@@ -72,7 +72,7 @@ void Decode_RunCmd(void)
       break;
 
 	  case 'M': //set up temperature value
-	  	if(run_t.gPower_flag==POWER_ON){
+	  	if(run_t.gPower_On==POWER_ON){
               
              run_t.set_temperature_value = cmdType_2;
 		 
@@ -81,7 +81,7 @@ void Decode_RunCmd(void)
 	  break;
 
 	  case 'T': //set up tiemr timing
-		  if(run_t.gPower_flag==POWER_ON){
+		  if(run_t.gPower_On==POWER_ON){
            
 	
 			   
@@ -89,7 +89,7 @@ void Decode_RunCmd(void)
 	  break;
 
 	  case 'O': //works how long times minute ?
-          if(run_t.gPower_flag==POWER_ON){
+          if(run_t.gPower_On==POWER_ON){
 
 		   
            
@@ -97,17 +97,12 @@ void Decode_RunCmd(void)
 	  break;
 
 	  case 'R': //remaining time minutes value ?
-          if(run_t.gPower_flag==POWER_ON){
-
-		     run_t.time_remaining_minutes_one = inputCmd[1];
-			 run_t.time_remaining_minutes_two =  inputCmd[2];
-		   
-	        }
+         
       break;
 
 	  
 	  case 'Z' ://buzzer sound 
-	    if(run_t.gPower_flag==POWER_ON){
+	    if(run_t.gPower_On==POWER_ON){
 
 		    if(cmdType_2== 'Z'){//turn off AI
 		        run_t.buzzer_sound_flag = 1;
@@ -132,13 +127,20 @@ void Decode_RunCmd(void)
 static void Single_Power_ReceiveCmd(uint8_t cmd)
 {
   
-  static uint8_t  first_power_on_buzzer=0;
+  static uint8_t  first_power_on_buzzer=0xff,set_power_on_buzzer;
+    static uint8_t  first_power_off_buzzer=0xff,set_power_off_buzzer;
     switch(cmd){
 
     case 0x00: //power off
-        Buzzer_KeySound();
+       set_power_on_buzzer++;
+         if(first_power_off_buzzer != set_power_off_buzzer){
+		   first_power_off_buzzer=set_power_off_buzzer;
+			Buzzer_KeySound();
 
-		
+       	}
+        printf("poff\n");
+		run_t.buzzer_sound_flag=0;
+		//Answering_Signal_USART1_Handler(COMMAND_ID,ANSWER_POWER_OFF);
 	   run_t.RunCommand_Label= POWER_OFF;
 
  
@@ -147,9 +149,14 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
     break;
 
     case 0x01: // power on
-   
-		Buzzer_KeySound();
-
+       set_power_off_buzzer ++ ;
+        if(first_power_on_buzzer != set_power_on_buzzer){
+		   first_power_on_buzzer=set_power_on_buzzer;
+           Buzzer_KeySound();
+        }
+		run_t.buzzer_sound_flag=0;
+		  printf("pon\n");
+        //Answering_Signal_USART1_Handler(COMMAND_ID,ANSWER_POWER_ON);
 		run_t.RunCommand_Label= POWER_ON;
 		
 
@@ -273,9 +280,8 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 **********************************************************************/
 void SystemReset(void)
 {
-    if(run_t.gPower_flag ==POWER_ON){
-		run_t.gPower_flag=0xff;
-		run_t.gPower_On=POWER_ON;
+    if(run_t.gPower_On ==POWER_ON){
+	
 		
 		__set_PRIMASK(1) ;
 		HAL_NVIC_SystemReset();
@@ -294,8 +300,8 @@ void SystemReset(void)
 void RunCommand_MainBoard_Fun(void)
 {
 
-   static uint8_t power_just_on,power_off_fan_flag,wifi_set_power_off=0;
-    
+   static uint8_t power_just_on,power_off_fan_flag,set_power_on=0xff,set_power_off=0xff;
+   static uint8_t power_on_flag,power_off_flag;
     if(run_t.buzzer_sound_flag == 1){
 	 	run_t.buzzer_sound_flag = 0;
 	    Buzzer_KeySound();
@@ -305,25 +311,24 @@ void RunCommand_MainBoard_Fun(void)
    switch(run_t.RunCommand_Label){
 
 	case POWER_ON: //1
-	    SetPowerOn_ForDoing();
+	   run_t.power_on_send_data_flag=0;
+	 
+		power_just_on =0;
+        run_t.gPower_On = POWER_ON;
+		run_t.gTimer_10s=0;
+      //  Update_DHT11_Value();
+       // HAL_Delay(100);
 
-        wifi_set_power_off=0;
-		run_t.gPower_flag = POWER_ON;
-		run_t.gPower_On = POWER_ON;
 		
-	    power_off_fan_flag=0;
-		power_just_on=0;
-        run_t.gTimer_10s=0;
-	
-		Update_DHT11_Value(); //to message display 
-		HAL_Delay(3);
-		
-	run_t.RunCommand_Label= FAN_CONTINUCE_RUN_ONE_MINUTE;
+	run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
 
 	break;
 
     case POWER_OFF: //2
-    
+		 run_t.power_on_send_data_flag=0;
+
+         Answering_Signal_USART1_Handler(COMMAND_ID,   ANSWER_POWER_OFF);
+         HAL_Delay(200);
 		SetPowerOff_ForDoing();
 
 	     if(power_off_fan_flag==0){
@@ -334,23 +339,31 @@ void RunCommand_MainBoard_Fun(void)
 		   run_t.gFan_continueRun =1;
     
 	     }
-	   run_t.gPower_flag =POWER_OFF;
-	   run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
+	
+	   run_t.RunCommand_Label= FAN_CONTINUCE_RUN_ONE_MINUTE;
 	 break;
 
 	case UPDATE_TO_PANEL_DATA: //3
      if(run_t.gTimer_senddata_panel >30 && run_t.gPower_On==POWER_ON){ //300ms
 	   	    run_t.gTimer_senddata_panel=0;
 	        ActionEvent_Handler();
+	        
 	 }
 
-	if((run_t.gTimer_10s>30 && run_t.gPower_flag == POWER_ON)||power_just_on < 10){
-    	power_just_on ++ ;
+	if((run_t.gTimer_10s>34 && run_t.gPower_On == POWER_ON)|| run_t.power_on_send_data_flag < 2){
+         run_t.power_on_send_data_flag ++ ;
 		run_t.gTimer_10s=0;
 		Update_DHT11_Value();
+        HAL_Delay(100);
+		printf("send_tem\n");
+        HAL_Delay(100);
+
+		 run_t.RunCommand_Label=ADC_UPDATE_DATA;
 
      }
+     break;
 
+	 case ADC_UPDATE_DATA:
 
 	
 	 if(run_t.gTimer_ptc_adc_times > 2 ){ //3 minutes 120s
@@ -363,6 +376,11 @@ void RunCommand_MainBoard_Fun(void)
 	 if(run_t.gTimer_fan_adc_times > 1){ //2 minute 180s
 	     run_t.gTimer_fan_adc_times =0;
 	     Self_CheckFan_Handler(ADC_CHANNEL_0,30);
+	 }
+	 else{
+	    run_t.RunCommand_Label= UPDATE_TO_PANEL_DATA;
+
+
 	 }
     break;
 

@@ -84,18 +84,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		     }
 			 else
 			  inputCmd[1]= inputBuf[0];
+			 
 	         run_t.decodeFlag =1;
-			
+			 
 	         state = 0;
         
         break;
 
 	
-	
-		default:
-			state=0;
-			run_t.decodeFlag =0;
+			
 		}
+	
 		HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 		
 	 }
@@ -118,6 +117,7 @@ void Decode_Function(void)
       run_t.decodeFlag =0;
 	  run_t.process_run_guarantee_flag =1;
       Decode_RunCmd();
+	//  printf("rx_display\n");
       
      }
 }
@@ -135,18 +135,20 @@ void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
   if(huart->Instance==USART1){
     
 
-	  if(run_t.gTimer_usart_error >6){
+	  if(run_t.gTimer_usart_error >48){
 	  	run_t.gTimer_usart_error=0;
-	    
-       
-           __HAL_UART_CLEAR_OREFLAG(&huart1);
-           
+
+         //  __HAL_UART_CLEAR_OREFLAG(&huart1);
+         __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_OREF);
+		   __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_RTOF);//UART_CLEAR_TXFECF
+           __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_TXFECF);
+        
          	temp = USART1->RDR;
 		 
           
 	       UART_Start_Receive_IT(&huart1,inputBuf,1);
           
-		  
+           	
           
          }
 	  	}
@@ -386,6 +388,33 @@ void SendData_Real_GMT(uint8_t hdata,uint8_t mdata,uint8_t sdata)
 
 }
 
+/********************************************************************************
+	**
+	*Function Name:void Answering_Signal_USART1_Handler(void)
+	*Function :UART1 acknowleg 
+	*Input Ref: cmddata =0,command ,cmddata =1,data
+	*Return Ref:NO
+	*
+*******************************************************************************/
+void Answering_Signal_USART1_Handler(uint8_t cmdordata,uint8_t data)
+{
+    outputBuf[0]=0x55; //head :0x55
+	outputBuf[1]=cmdordata; //ID:command or data
+	outputBuf[2]=0; //Type: 0 ->uint8_t 
+	outputBuf[3]=0x01; //length: 1 	
+	outputBuf[4]=data; //
+	outputBuf[5] = outputBuf[0]+outputBuf[1]+outputBuf[2]+outputBuf[3]+outputBuf[4];
+	//for(i=3;i<6;i++) crc ^= outputBuf[i];
+	//outputBuf[i]=crc;
+	transferSize=6;
+	if(transferSize)
+	{
+		while(transOngoingFlag); //UART interrupt transmit flag ,disable one more send data.
+		transOngoingFlag=1;
+		HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
+	}
+
+}
 
 
 /********************************************************************************

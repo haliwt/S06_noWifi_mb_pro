@@ -112,7 +112,8 @@ int main(void)
   UART_Start_Receive_IT(&huart1,inputBuf,1);
   //HAL_UART_Receive_IT(&huart2,usart_wifi_t.usart_wifi_data,1);
   //UART_Start_Receive_IT(&huart2,usart_wifi_t.usart_wifi,sizeof(usart_wifi_t.usart_wifi)/sizeof(usart_wifi_t.usart_wifi[0]));
-  __HAL_UART_ENABLE_IT(&huart2,UART_IT_RXNE);
+  //__HAL_UART_ENABLE_IT(&huart2,UART_IT_RXNE);
+  __HAL_UART_ENABLE_IT(&huart1,UART_IT_ERR);
    printf("Initialize is over\n");
 
   /* USER CODE END 2 */
@@ -127,9 +128,9 @@ int main(void)
   
 	
 	Decode_Function();
-	if(run_t.decodeFlag ==0){
+
       RunCommand_MainBoard_Fun();
-	}
+	
 	
    USART1_Cmd_Error_Handler(&huart1);
 	
@@ -197,6 +198,9 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+             __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_OREF);
+       __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_RTOF);//UART_CLEAR_TXFECF
+           __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_TXFECF);
   }
   /* USER CODE END Error_Handler_Debug */
 }

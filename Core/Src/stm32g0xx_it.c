@@ -175,21 +175,21 @@ void USART1_IRQHandler(void)
 /**
   * @brief This function handles USART2 global interrupt / USART2 wake-up interrupt through EXTI line 26.
   */
-void USART2_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART2_IRQn 0 */
-
-  /* USER CODE END USART2_IRQn 0 */
-  HAL_UART_IRQHandler(&huart2);
-  /* USER CODE BEGIN USART2_IRQn 1 */
-      if(USART2->ISR & UART_FLAG_RXFNE){
-
-	  usart_data[0] = USART2 ->RDR;
-      USART2_Receive_Interrupt_Data();
-		  
-	}
-  /* USER CODE END USART2_IRQn 1 */
-}
+//void USART2_IRQHandler(void)
+//{
+//  /* USER CODE BEGIN USART2_IRQn 0 */
+//
+//  /* USER CODE END USART2_IRQn 0 */
+//  HAL_UART_IRQHandler(&huart2);
+//  /* USER CODE BEGIN USART2_IRQn 1 */
+//      if(USART2->ISR & UART_FLAG_RXFNE){
+//
+//	  usart_data[0] = USART2 ->RDR;
+//      USART2_Receive_Interrupt_Data();
+//		  
+//	}
+//  /* USER CODE END USART2_IRQn 1 */
+//}
 
 /* USER CODE BEGIN 1 */
 

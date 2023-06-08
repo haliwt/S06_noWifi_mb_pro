@@ -14,22 +14,14 @@ void SetPowerOn_ForDoing(void)
 {
 
     set_power_off=0;
-    run_t.gPower_flag = POWER_ON;
     run_t.gPower_On=POWER_ON;
 	run_t.open_fan_works_flag++;
-    
-    if(run_t.app_appointment_time_power_on != POWER_ON){
-	    run_t.gFan = 1;
-		run_t.gDry = 1;
-		run_t.gPlasma =1;       //"杀菌"
-		run_t.gUltrasonic = 1; // "驱虫"
-
-		//FAN_CCW_RUN();
+     //FAN_CCW_RUN();
 		Fan_Run_Fun();
 	    PLASMA_SetHigh(); //
 	    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);//ultrasnoic ON 
 	    PTC_SetHigh(); //bug is be detect 2023.04.30
-    }
+    
    
 	
    
@@ -40,7 +32,7 @@ void SetPowerOff_ForDoing(void)
 {
 
    
-	run_t.gPower_flag = 0;
+	
 	run_t.gPower_On = POWER_OFF;
 
  
@@ -112,19 +104,5 @@ void ActionEvent_Handler(void)
 	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);//ultrasnoic off
 
 	}
-	
-//    //shut off function and after 1 minutes shut off wind fan 
-//	if(run_t.gPlasma ==0 && run_t.gDry==0 && run_t.fan_start_shut_off_flag ==0 ){
-//
-//        run_t.gFan_counter=0;
-//		run_t.fan_start_shut_off_flag++ ;
-//		run_t.gFan_continueRun=1;        
-//
-//	}
-	
-		
-
-
-
 }
 

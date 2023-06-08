@@ -28,6 +28,7 @@ typedef enum{
    POWER_ON =0x01,
    POWER_CONNECTOR_WIFI,
    UPDATE_TO_PANEL_DATA,
+   ADC_UPDATE_DATA,
    WIFI_RESTART_INIT,
    WIFI_NORMAL_POWER_ON,
    FAN_CONTINUCE_RUN_ONE_MINUTE, //7
@@ -58,6 +59,18 @@ typedef enum{
 
 }works_t;
 
+typedef enum{
+
+   COMMAND_ID,
+   DATA_ID,
+
+   ANSWER_POWER_OFF =0x02,
+
+   ANSWER_POWER_ON = 0x3
+
+
+}answering_state;
+
 
 
 typedef struct _RUN_T{
@@ -65,7 +78,7 @@ typedef struct _RUN_T{
     //power on
 	uint8_t gPower_On;
 
-	uint8_t gPower_flag;
+
 	uint8_t gDht11_flag;
 	
 
@@ -80,6 +93,7 @@ typedef struct _RUN_T{
 	uint8_t buzzer_sound_flag ;
   
     uint8_t decodeFlag;
+    uint8_t power_on_send_data_flag;
 
  
  

@@ -6,6 +6,33 @@
 #include "usart.h"
 
 
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+   uint32_t temp;
+
+    if(huart->Instance==USART1){
+	
+		if(__HAL_UART_GET_FLAG(&huart1,UART_FLAG_ORE)!=RESET){
+
+		__HAL_UART_CLEAR_OREFLAG(&huart1);
+		UART_Start_Receive_IT(&huart1,inputBuf,1);
+
+		}
+		__HAL_UNLOCK(&huart1);
+		   __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_OREF);
+		   __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_RTOF);//UART_CLEAR_TXFECF
+           __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_TXFECF);
+		//  temp = USART1 ->ISR;
+		temp = USART1->RDR;
+		UART_Start_Receive_IT(&huart1,inputBuf,1);
+	
+		}
+
+
+
+
+}
+
 void USART2_Receive_Interrupt_Data(void)
 {
 	
