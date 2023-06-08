@@ -326,7 +326,7 @@ void RunCommand_MainBoard_Fun(void)
 	     run_t.gPower_On = POWER_OFF;
 		 run_t.power_on_send_data_flag=0;
 
-       
+        power_off_fan_flag=0;
 		//SetPowerOff_ForDoing();
 		run_t.gFan_counter =0;
 		run_t.gFan_continueRun =1;
@@ -380,7 +380,7 @@ void RunCommand_MainBoard_Fun(void)
 	     if(power_off_fan_flag==0){
 		 	power_off_fan_flag++;
 			SetPowerOff_ForDoing();
-            Answering_Signal_USART1_Handler(COMMAND_ID,ANSWER_POWER_OFF);
+          //  Answering_Signal_USART1_Handler(COMMAND_ID,ANSWER_POWER_OFF);
      
 		 }
 
