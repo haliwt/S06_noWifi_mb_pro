@@ -1,7 +1,7 @@
 #include "flash.h"
 #include "run.h"
 
-
+#if 0
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
@@ -63,7 +63,7 @@ void Flash_Erase_Data(void)
     }
   }
 }
-
+#if 0
 void Flash_Write_Data(void)
 {
 	 HAL_FLASH_Unlock();
@@ -155,4 +155,5 @@ static uint32_t GetPage(uint32_t Addr)
   return (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;;
 }
 
-
+#endif 
+#endif 

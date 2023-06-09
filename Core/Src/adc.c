@@ -256,11 +256,9 @@ void Judge_PTC_Temperature_Value(void)
 	    run_t.gDry =0 ;
 	    PTC_SetLow(); //turn off
         run_t.ptc_too_heat_value =1;
-           run_t.alarm_call= 0x04;
+        SendWifiCmd_To_Order(DRY_OFF);
    	      
-          
-			
-   	}
+   }
 }
 
 /*****************************************************************
@@ -276,8 +274,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 {
 	uint16_t adc_fan_hex;
 	
-	run_t.fan_set_level = 4;
-	SetLevel_Fan_PWMA(100);
+	
 
 	adc_fan_hex = Get_Adc_Average(channel,times);
 
@@ -286,7 +283,6 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 
 	if(run_t.fan_detect_voltage >800 &&  run_t.fan_detect_voltage < 1400){
            detect_error_times=0;
-           run_t.alarm_call = 0x00 ;  //fan is run OK
            printf("adc= %d",run_t.fan_detect_voltage);
 
     }
@@ -294,8 +290,8 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 
 	          
 			   if(detect_error_times >0){
-			   	detect_error_times=0;
-				   run_t.alarm_call = 0x02 ;  //fan is error
+			   		detect_error_times=0;
+		
 				
 			       HAL_Delay(200);
 			       Buzzer_KeySound();
@@ -306,6 +302,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 			       HAL_Delay(100);
 				   Buzzer_KeySound();
 			       HAL_Delay(100);
+				   SendWifiCmd_To_Order(FAN_OFF);
 
 			   	}
 	           detect_error_times++;

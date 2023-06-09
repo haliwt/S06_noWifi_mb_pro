@@ -51,15 +51,14 @@ typedef enum{
 	 PLASMA_ON = 0x20,
 	 PLASMA_OFF = 0x21,
 
-	 ULTRASONIC_ON =0x10,
-	 ULTRASONIC_OFF = 0x11,
-
-	 WIFI_CONNECT_FAIL = 0x55,
-     WIFI_CONNECT_SUCCESS= 0xAA
-
-
+     FAN_ON = 0x10,       //ultrasonic
+     FAN_OFF = 0x11,
+     
 
 }works_t;
+
+
+
 
 typedef enum{
 
@@ -90,7 +89,6 @@ typedef struct _RUN_T{
     
 
 	uint8_t RunCommand_Label;
-	uint8_t dp_link_wifi_fail;
 	//buzzer
 	uint8_t buzzer_sound_flag ;
   
@@ -100,34 +98,17 @@ typedef struct _RUN_T{
 
  
  
-
-    //flash 
-    uint8_t flash_write_data_error;
-	uint8_t flash_write_data_flag;
-    uint8_t flash_read_data;
-	
 	
     //ptc
     uint8_t  gDry;
     uint8_t gTimer_ptc_adc_times ;
-   
     uint8_t ptc_too_heat_value;
 	
 	//fan 
 	uint8_t  gFan;
-	uint8_t gFan_pwm_duty_level;
-	uint8_t fan_detect_malfuntion;
 	uint8_t gFan_continueRun;
 	uint8_t  gFan_counter;
-	uint8_t fan_start_shut_off_flag;
-	uint8_t gTimer_fan_oneselt_test ;
-	uint8_t gTimer_fan_adc_times;
-	uint8_t self_check_fan_power_on;
-	uint8_t fan_set_level;
-	uint8_t open_fan_works_flag;
-	uint8_t gFanSpeed;
-	
-
+    uint8_t gTimer_fan_adc_times;
 	//adc 
 	uint8_t ADC_channel_No;
       
@@ -140,8 +121,9 @@ typedef struct _RUN_T{
       uint8_t  gTemperature ;
 
 	  uint8_t  gHumidity;
+	 
 	//fault 
-	  uint8_t  alarm_call;
+
 	
 	  
 
@@ -153,21 +135,16 @@ typedef struct _RUN_T{
     uint8_t gTimer_usart_error;
     uint8_t iwdg_feed_success_flag;
 
-	//wifi 
-	uint8_t recoder_wifi_link_cloud_flag;
-
+	
+	
 	  
 	  uint8_t  set_temperature_value;
 	  uint8_t  set_timer_timing_value;
 	  uint8_t  set_temperature_decade;
 	  uint8_t  set_temperature_unit;
-	  uint8_t  set_wind_speed_value;
-  
-	  uint8_t  wind_speed_decade;
-	  uint8_t  wind_speed_unit;
-      uint8_t wifi_config_net_lable;
 	 
-	  uint8_t wifi_link_JPai_cloud;
+  
+
 	  uint8_t first_power_on_flag;
 	  uint8_t app_appointment_time_power_on;
 	  uint8_t theFirst_input_power_flag;

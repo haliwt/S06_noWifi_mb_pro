@@ -87,7 +87,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	    run_t.gTimer_check_iwdg_flag++;
 	   run_t.gTimer_iwdg++;
 	   run_t.gTimer_usart_error++;
-	   run_t.gTimer_fan_oneselt_test++;
+	 
 		
 	  if(tm1 >59){ //minutes
 	  	tm1=0;

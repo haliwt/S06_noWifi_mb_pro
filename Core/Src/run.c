@@ -232,27 +232,15 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 	   
        break;
 
-       case ULTRASONIC_ON:
-        
-		  run_t.gUltrasonic =1;
-		  Buzzer_KeySound();
-		
-		   
-       break;
+       case  FAN_ON:
 
-       case ULTRASONIC_OFF :
-	   	    run_t.gUltrasonic =0;
-	        Buzzer_KeySound();
-		  
-		
-		 
-		  
-       break;
+	       run_t.gFan =1;
+		    Buzzer_KeySound();
+      break;
 
-	   case WIFI_CONNECT_FAIL:
-
-	       run_t.dp_link_wifi_fail =1;
-
+	   case FAN_OFF:
+	   	  run_t.gFan =0;
+		   Buzzer_KeySound();
 
 	   break;
 
@@ -398,7 +386,7 @@ static void Fan_ContinueRun_OneMinute_Fun(void)
           
 		if(run_t.gFan_counter < 60){
 
-		    Fan_Run_Fun();
+		    FAN_CCW_RUN();
 		}       
         else if(run_t.gFan_counter > 59){
 

@@ -109,7 +109,7 @@ void Decode_Function(void)
       run_t.decodeFlag =0;
 	  run_t.process_run_guarantee_flag =1;
       Decode_RunCmd();
-	//  printf("rx_display\n");
+
       
      }
 }
@@ -181,7 +181,7 @@ void sendData_Reference_Data(uint8_t dry,uint8_t kill,uint8_t mouse)
 	outputBuf[0]='M'; //master
 	outputBuf[1]='A'; //41
 	outputBuf[2]='R'; //
-	outputBuf[3]=dry; //	// 'R' rotator motor for select filter
+	outputBuf[3]=dry; //	
 	outputBuf[4]=kill; // // one command parameter
 	outputBuf[5]=mouse;
 	
@@ -287,74 +287,6 @@ void SendWifiData_To_PanelTemp(uint8_t dat1)
 *Return Ref:NO
 *
 *******************************************************************************/
-void SendWifiData_To_WifiSetTemp(uint8_t dat1)
-{
-   
-	//crc=0x55;
-		outputBuf[0]='M'; //4D
-		outputBuf[1]='A'; //41
-		outputBuf[2]='E'; // 'T' time
-		outputBuf[3]=dat1; //	
-	
-		
-		//for(i=3;i<6;i++) crc ^= outputBuf[i];
-		//outputBuf[i]=crc;
-		transferSize=4;
-		if(transferSize)
-		{
-			while(transOngoingFlag); //UART interrupt transmit flag ,disable one more send data.
-			transOngoingFlag=1;
-			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
-		}
-
-}
-
-
-void SendWifiData_To_PanelWindSpeed(uint8_t dat1)
-{
-   
-	//crc=0x55;
-		outputBuf[0]='M'; //
-		outputBuf[1]='A'; //
-		outputBuf[2]='S'; // wind speed
-		outputBuf[3]=dat1; //	
-	
-		
-		//for(i=3;i<6;i++) crc ^= outputBuf[i];
-		//outputBuf[i]=crc;
-		transferSize=4;
-		if(transferSize)
-		{
-			while(transOngoingFlag); //UART interrupt transmit flag ,disable one more send data.
-			transOngoingFlag=1;
-			HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
-		}
-
-}
-
-
-void SendWifiData_To_Cmd(uint8_t wdata)
-{
-  
-	//crc=0x55;
-			outputBuf[0]='M'; //4D
-			outputBuf[1]='A'; //41
-			outputBuf[2]='W'; //44	// wifi ->infomation link wifi 	
-			outputBuf[3]=wdata; //
-			//for(i=3;i<6;i++) crc ^= outputBuf[i];
-			//outputBuf[i]=crc;
-			transferSize=4;
-			if(transferSize)
-			{
-				while(transOngoingFlag); //UART interrupt transmit flag ,disable one more send data.
-				transOngoingFlag=1;
-				HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
-			}
-}
-/***************************************************************
- * 
- * Function: panel power on and special function
-***************************************************************/
 void SendWifiCmd_To_Order(uint8_t odata)
 {
   
@@ -375,7 +307,7 @@ void SendWifiCmd_To_Order(uint8_t odata)
 
 
 }
-
+#if 0
 void SendData_Real_GMT(uint8_t hdata,uint8_t mdata,uint8_t sdata)
 {
    
@@ -397,7 +329,7 @@ void SendData_Real_GMT(uint8_t hdata,uint8_t mdata,uint8_t sdata)
 	}
 
 }
-
+#endif 
 /********************************************************************************
 	**
 	*Function Name:void Answering_Signal_USART1_Handler(void)

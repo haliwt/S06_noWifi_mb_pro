@@ -7,51 +7,20 @@
 
 
 
-#if 0
+
 void FAN_CCW_RUN(void)
 {
    FAN_CW_SetLow();
    FAN_CCW_SetHigh(); //PA6
   
 }
-#endif 
+ 
 void FAN_Stop(void)
 {
     FAN_CCW_SetLow(); //brake
-    HAL_TIM_PWM_Stop(&htim16,TIM_CHANNEL_1);
+    FAN_CCW_SetLow(); //PA6
     
 }
-
-#if 0
-void Fan_Slowly_Speed(void)
-{
-    static uint16_t fan_speed;
-	//static uint16_t  fan_dec;
-	fan_speed ++ ;
-	
-	FAN_CW_SetLow();
-
-	if(fan_speed ==1)  FAN_CCW_SetLow(); //brake//Run fan//brake/Run fan //Run fan//brake //Run fan //brake //Run fan
-	
-	if(fan_speed % 2 ==0 ){
-	   FAN_CCW_SetHigh(); //Run fan
-    }
-    if( fan_speed % 3 ==0 ){
-  
-	  FAN_CCW_SetLow(); //brake
-	  
-	}
-
-	if(fan_speed > 10000){
-		fan_speed =0;
-	    
-	     FAN_CCW_SetLow(); //brake
-	}
-	
-}
-
-#endif 
-
 void ShutDown_AllFunction(void)
 {
 	
@@ -64,18 +33,8 @@ void ShutDown_AllFunction(void)
 
 }
 
-void Fan_Run_Fun(void)
-{
-	if(run_t.set_wind_speed_value==0){
-		    run_t.fan_set_level = 1;
-		   SetLevel_Fan_PWMA(99);
-	   }
-	   else{
-			 run_t.fan_set_level = 2;
-		    SetLevel_Fan_PWMA(100);
 
-		}
-}
+
 
 //"杀毒" 
 void SterIlization(uint8_t sel)
@@ -96,7 +55,7 @@ void SterIlization(uint8_t sel)
 
 
 }
-
+//PTC
 void Dry_Function(uint8_t sel)
 {
    if(sel ==0){
@@ -113,24 +72,22 @@ void Dry_Function(uint8_t sel)
    }
 
 }
-/********************************************************
-*
-*Function Name:void SetLevel_Fan_PWMA(uint8_t levelval)
-*Function: 
-*
-*
-********************************************************/
-void SetLevel_Fan_PWMA(uint8_t levelval)
+//FAN 
+void Fan_Function(uint8_t sel)
 {
-     static uint8_t fan_default_value=0xff;
-	 run_t.gFan_pwm_duty_level = levelval;
-     FAN_CW_SetLow();
-	 if(fan_default_value != run_t.fan_set_level){
-	 	fan_default_value=run_t.fan_set_level;
-	 	
-	   MX_TIM16_Init();
-	 }
-	 HAL_TIM_PWM_Start(&htim16,TIM_CHANNEL_1);
-}
 
+	if(sel ==0){
+	
+	  FAN_CCW_RUN();
+	
+	}
+	else{
+	
+		FAN_Stop() ;
+	
+	}
+
+
+
+}
 
