@@ -356,7 +356,7 @@ void RunCommand_MainBoard_Fun(void)
    if(run_t.gTimer_ptc_adc_times > 2 ){ //3 minutes 120s
          run_t.gTimer_ptc_adc_times=0;
 		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
-         run_t.ptc_temp_voltage=200;
+         //run_t.ptc_temp_voltage=200;
 	     Judge_PTC_Temperature_Value();
          
 
