@@ -76,7 +76,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         case 3:
 		    
 	        inputCmd[1]= inputBuf[0];
-	        printf("rx_p=%d\n",inputBuf[0]);
+	        #if DEBUG
+	        	printf("rx_p=%d\n",inputBuf[0]);
+	        #endif 
 		     run_t.decodeFlag =1;
 			 
 	         state = 0;
@@ -293,7 +295,7 @@ void SendWifiCmd_To_Order(uint8_t odata)
 
 			outputBuf[0]='M'; //mainboard
 			outputBuf[1]='A'; //A ->
-			outputBuf[2]='C'; //'C' ->control 
+			outputBuf[2]='E'; //'C' ->control 
 			outputBuf[3]=odata; //	
 		
 			transferSize=4;

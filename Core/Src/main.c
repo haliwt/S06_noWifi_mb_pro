@@ -114,7 +114,9 @@ int main(void)
   //UART_Start_Receive_IT(&huart2,usart_wifi_t.usart_wifi,sizeof(usart_wifi_t.usart_wifi)/sizeof(usart_wifi_t.usart_wifi[0]));
   //__HAL_UART_ENABLE_IT(&huart2,UART_IT_RXNE);
   __HAL_UART_ENABLE_IT(&huart1,UART_IT_ERR);
+  #if DEBUG
    printf("Initialize is over\n");
+  #endif 
 
   /* USER CODE END 2 */
   

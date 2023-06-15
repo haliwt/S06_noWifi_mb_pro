@@ -5,7 +5,7 @@
 #define WIFI_TUYA      1  //
 #define AI_ENABLE      1
 
-#define DEBUG           0
+#define DEBUG           1
 
 typedef enum {                   /* enumeration for CProcess signals */
     kill =1,notkill,dry,notdry,ai,notai
@@ -53,6 +53,11 @@ typedef enum{
 
      FAN_ON = 0x10,       //ultrasonic
      FAN_OFF = 0x11,
+
+	 PTC_WARNING= 0xE1,
+	 FAN_WARNING = 0xE2,
+
+	 FAN_REMOVE_WARNING = 0xF2
      
 
 }works_t;
@@ -123,12 +128,12 @@ typedef struct _RUN_T{
 	  uint8_t  gHumidity;
 	 
 	//fault 
-
-	
+	 uint8_t fan_warning ;
+	 uint8_t ptc_warning;
 	  
 
 	  //usart1
-	 uint8_t gTimer_iwdg;
+	
      uint8_t process_run_guarantee_flag ;
     uint8_t gTimer_check_iwdg_flag;
     uint8_t gTimer_check_iwdg_fla;
