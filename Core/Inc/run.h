@@ -5,7 +5,7 @@
 #define WIFI_TUYA      1  //
 #define AI_ENABLE      1
 
-#define DEBUG           1
+#define DEBUG          0
 
 typedef enum {                   /* enumeration for CProcess signals */
     kill =1,notkill,dry,notdry,ai,notai
@@ -100,6 +100,7 @@ typedef struct _RUN_T{
     uint8_t decodeFlag;
     uint8_t power_on_send_data_flag;
     uint8_t gTimer_usart_error_2;
+	uint8_t interval_time_stop_run;
 
  
  
@@ -166,7 +167,9 @@ typedef struct _RUN_T{
 	uint8_t  work_time_minutes_one;
 	uint8_t  work_time_minutes_two;
 
+	uint16_t gTimer_continuce_works_time;
 	uint16_t fan_detect_voltage; 
+	
 	uint16_t ptc_temp_voltage;
 
 	

@@ -303,6 +303,8 @@ void RunCommand_MainBoard_Fun(void)
 	 
         run_t.gPower_On = POWER_ON;
 		run_t.gTimer_10s=0;
+		run_t.gTimer_continuce_works_time=0;
+		run_t.interval_time_stop_run=0;
     
      	SetPowerOn_ForDoing();
 
@@ -314,6 +316,8 @@ void RunCommand_MainBoard_Fun(void)
     case POWER_OFF: //2
 	     run_t.gPower_On = POWER_OFF;
 		 run_t.power_on_send_data_flag=0;
+	     run_t.gTimer_continuce_works_time=0;
+		 run_t.interval_time_stop_run=0;
 
         power_off_flag=0;
 		if(power_off_fan==0){
@@ -334,41 +338,86 @@ void RunCommand_MainBoard_Fun(void)
 	 break;
 
 	case UPDATE_TO_PANEL_DATA: //3
-     if(run_t.gTimer_senddata_panel >40 && run_t.gPower_On==POWER_ON){ //300ms
-	   	    run_t.gTimer_senddata_panel=0;
-	   	  
-	        ActionEvent_Handler();
-	       #if DEBUG
-	     
-	         printf("test_data\n");
-	     	
-	       #endif 
-	        
-	 }
 
-	if((run_t.gTimer_10s>34 && run_t.gPower_On == POWER_ON)|| run_t.power_on_send_data_flag < 2){
-         run_t.power_on_send_data_flag ++ ;
-		    run_t.gTimer_10s=0;
-		    Update_DHT11_Value();
-        	HAL_Delay(10);
-    }
-    
-   if(run_t.gTimer_ptc_adc_times > 2 ){ //3 minutes 120s
-         run_t.gTimer_ptc_adc_times=0;
-		 Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
-         //run_t.ptc_temp_voltage=200;
-	     Judge_PTC_Temperature_Value();
-         
+		switch(run_t.interval_time_stop_run){
 
-	 }
+            case 0 :
+			if(run_t.gTimer_senddata_panel >40 && run_t.gPower_On==POWER_ON){ //300ms
+			run_t.gTimer_senddata_panel=0;
 
-	 if(run_t.gTimer_fan_adc_times > 1){ //2 minute 180s
-	     run_t.gTimer_fan_adc_times =0;
-         
-	     Self_CheckFan_Handler(ADC_CHANNEL_0,30);
-         
-	 }
-	
+			ActionEvent_Handler();
+			#if DEBUG
+
+			printf("test_data\n");
+
+			#endif 
+
+			}
+
+			if((run_t.gTimer_10s>34 && run_t.gPower_On == POWER_ON)|| run_t.power_on_send_data_flag < 2){
+				run_t.power_on_send_data_flag ++ ;
+				run_t.gTimer_10s=0;
+				Update_DHT11_Value();
+				HAL_Delay(2);
+			}
+
+			if(run_t.gTimer_ptc_adc_times > 2 ){ //3 minutes 120s
+				run_t.gTimer_ptc_adc_times=0;
+				Get_PTC_Temperature_Voltage(ADC_CHANNEL_1,20);
+				//run_t.ptc_temp_voltage=200;
+				Judge_PTC_Temperature_Value();
+
+
+			}
+
+			if(run_t.gTimer_fan_adc_times > 1){ //2 minute 180s
+			run_t.gTimer_fan_adc_times =0;
+
+			Self_CheckFan_Handler(ADC_CHANNEL_0,30);
+
+			}
+
+			if(run_t.gTimer_continuce_works_time > 7200){
+		     run_t.gTimer_continuce_works_time =0;
+	         run_t.interval_time_stop_run =1;
+		     run_t.gFan_continueRun =1;
+			 run_t.gFan_counter=0;
+		    }
+
+		break;
+
+		case 1:
+				PLASMA_SetLow(); //
+				HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);//ultrasnoic Off 
+				PTC_SetLow(); 
+			
+				if(run_t.gTimer_continuce_works_time > 600){
+					run_t.gTimer_continuce_works_time=0;
+					run_t.interval_time_stop_run =0;
+
+
+				}
+
+				if(run_t.gFan_continueRun ==1){
+
+					if(run_t.gFan_counter < 60){
+
+					   FAN_CCW_RUN();
+					}       
+
+					if(run_t.gFan_counter > 59){
+
+					run_t.gFan_counter=0;
+
+					run_t.gFan_continueRun++;
+					FAN_Stop();
+					}
+
+				}
+	 
+
+		break;
+		}
     break;
 
 	case  FAN_CONTINUCE_RUN_ONE_MINUTE:

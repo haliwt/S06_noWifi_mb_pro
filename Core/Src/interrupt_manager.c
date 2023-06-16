@@ -71,7 +71,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	 if(tm0 > 99){//100ms *10 = 1000ms =1s
         tm0 =0;
 		tm1 ++ ;
-	  
+	    run_t.gTimer_continuce_works_time++;
 		run_t.gFan_counter++;
 
         run_t.gTimer_1s ++;
