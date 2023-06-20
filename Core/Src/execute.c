@@ -51,7 +51,7 @@ void SetPowerOff_ForDoing(void)
 
 void ActionEvent_Handler(void)
 {
-   if(run_t.ptc_too_heat_value ==0){
+   if(run_t.ptc_warning ==0){
 	if(run_t.gDry == 1){
 	
         PTC_SetHigh();
@@ -76,7 +76,7 @@ void ActionEvent_Handler(void)
 		
 	}
 
-   
+   if(run_t.fan_warning ==0){
    if(run_t.gFan ==1){
       FAN_CCW_RUN();
   
@@ -84,6 +84,7 @@ void ActionEvent_Handler(void)
    else{
      FAN_Stop();
 
+   }
    }
 			
 }

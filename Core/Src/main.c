@@ -76,7 +76,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+   static uint8_t power_on_the_first;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -105,7 +105,7 @@ int main(void)
   MX_ADC1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-  Self_Check_Fain_Init();
+  
   
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim14);//HAL_TIM_Base_Start(&htim3);
@@ -113,7 +113,7 @@ int main(void)
   //HAL_UART_Receive_IT(&huart2,usart_wifi_t.usart_wifi_data,1);
   //UART_Start_Receive_IT(&huart2,usart_wifi_t.usart_wifi,sizeof(usart_wifi_t.usart_wifi)/sizeof(usart_wifi_t.usart_wifi[0]));
   //__HAL_UART_ENABLE_IT(&huart2,UART_IT_RXNE);
-  __HAL_UART_ENABLE_IT(&huart1,UART_IT_ERR);
+  //__HAL_UART_ENABLE_IT(&huart1,UART_IT_ERR);
   #if DEBUG
    printf("Initialize is over\n");
   #endif 
@@ -128,14 +128,18 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   
-	
+	if(power_on_the_first==0){
+    
+        power_on_the_first++;
+        Buzzer_KeySound();
+    
+    }
 	Decode_Function();
-
-    RunCommand_MainBoard_Fun();
-	
-	
-   USART1_Cmd_Error_Handler(&huart1);
-  // USART2_Cmd_Error_Handler(&huart2);
+    if(run_t.decodeFlag ==0){
+      RunCommand_MainBoard_Fun();
+	  
+    }
+    USART1_Cmd_Error_Handler(&huart1);
 	
   }
   /* USER CODE END 3 */
@@ -196,13 +200,27 @@ void SystemClock_Config(void)
   */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
+  uint32_t temp;
+   
+
+
+        __HAL_UART_CLEAR_OREFLAG(&huart1);
+		temp = USART1->RDR;
+        UART_Start_Receive_IT(&huart1,inputBuf,1);
+          
+         
+          
+      
+    
+    /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-     
-  }
+//  __disable_irq();
+//  while (1)
+//  {
+//       __HAL_UART_CLEAR_OREFLAG(&huart1);
+//	   UART_Start_Receive_IT(&huart1,inputBuf,1);
+//       printf("usart1_error\n");
+//  }
   /* USER CODE END Error_Handler_Debug */
 }
 

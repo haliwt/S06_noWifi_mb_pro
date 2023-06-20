@@ -224,14 +224,14 @@ static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times)
 
 void Get_PTC_Temperature_Voltage(uint32_t channel,uint8_t times)
 {
-    static uint8_t first;
+ 
 	
 	adcx = Get_Adc_Average(channel,times);
 
     run_t.ptc_temp_voltage  =(uint16_t)((adcx * 3300)/4096); //amplification 100 ,3.11V -> 311
 
-	if(first < 1){ //power on the voltage is small 
-         first ++ ;
+	if(run_t.open_ptc_detected_flag == 0){ //power on the voltage is small 
+         run_t.open_ptc_detected_flag++ ;
          run_t.ptc_temp_voltage = 500;
     }
 	#ifdef DEBUG
@@ -274,6 +274,7 @@ void Judge_PTC_Temperature_Value(void)
        HAL_Delay(100);
    	      
    }
+   
 }
 
 /*****************************************************************
@@ -294,9 +295,9 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 	adc_fan_hex = Get_Adc_Average(channel,times);
 
     run_t.fan_detect_voltage  =(uint16_t)((adc_fan_hex * 3300)/4096); //amplification 1000 ,3.111V -> 3111
-	HAL_Delay(20);
+	HAL_Delay(5);
 
-	if(run_t.fan_detect_voltage >550 &&  run_t.fan_detect_voltage < 1400){
+	if(run_t.fan_detect_voltage >400 &&  run_t.fan_detect_voltage < 1400){
            detect_error_times=0;
 		   #ifdef DEBUG
              printf("adc= %d",run_t.fan_detect_voltage);
@@ -308,7 +309,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 	          
 			   if(detect_error_times >0){
 			   		detect_error_times=0;
-		
+		           run_t.fan_warning = 1;
 				
 			       HAL_Delay(200);
 			       Buzzer_KeySound();
@@ -320,7 +321,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 				   Buzzer_KeySound();
 			       HAL_Delay(100);
 				   SendWifiCmd_To_Order(FAN_WARNING);
-				   run_t.fan_warning = 1;
+				  
 
 			   	}
 	           detect_error_times++;

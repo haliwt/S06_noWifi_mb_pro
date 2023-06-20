@@ -166,7 +166,7 @@ uint8_t DHT11_Read_TempAndHumidity(DHT11_Data_TypeDef *DHT11_Data)
     DHT11_Data->temperature=(float)humi_temp/100;    
     
     /*����ȡ�������Ƿ���ȷ*/
-    temp = DHT11_Data->humi_high8bit + DHT11_Data->humi_low8bit + 
+    temp = DHT11_Data->humi_high8bit + DHT11_Data->humi_low8bit +
            DHT11_Data->temp_high8bit+ DHT11_Data->temp_low8bit;
     if(DHT11_Data->check_sum==temp)
     { 

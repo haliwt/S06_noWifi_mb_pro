@@ -14,10 +14,8 @@
 uint8_t  inputBuf[5];
 uint8_t  inputCmd[5];
 uint8_t  wifiInputBuf[1];
-uint8_t test_counter;
-uint8_t test_counter_usat1;
 
-
+uint32_t temp;
 
 
 static uint8_t transferSize;
@@ -42,7 +40,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 	if(huart->Instance==USART1)//if(huart==&huart1) // Motor Board receive data (filter)
 	{
-        test_counter_usat1++;
+      
 		switch(state)
 		{
 		case 0:  //#0
@@ -76,9 +74,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         case 3:
 		    
 	        inputCmd[1]= inputBuf[0];
-	        #if DEBUG
-	        	printf("rx_p=%d\n",inputBuf[0]);
-	        #endif 
+	       
 		     run_t.decodeFlag =1;
 			 
 	         state = 0;
@@ -88,7 +84,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	
 			
 		}
-	
+	 // __HAL_UART_CLEAR_OREFLAG(&huart1);
 		HAL_UART_Receive_IT(&huart1,inputBuf,1);//UART receive data interrupt 1 byte
 		
 	 }
@@ -111,7 +107,7 @@ void Decode_Function(void)
       run_t.decodeFlag =0;
 	  run_t.process_run_guarantee_flag =1;
       Decode_RunCmd();
-
+   
       
      }
 }
@@ -125,49 +121,46 @@ void Decode_Function(void)
 *********************************************/ 
 void USART1_Cmd_Error_Handler(UART_HandleTypeDef *huart)
 {
-   uint32_t temp;
+   
   if(huart->Instance==USART1){
     
 
-	  if(run_t.gTimer_usart_error >48){
+	  if(run_t.gTimer_usart_error >5){
 	  	run_t.gTimer_usart_error=0;
 
-       
-         __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_OREF);
-		   __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_RTOF);//UART_CLEAR_TXFECF
-           __HAL_UART_CLEAR_IT(&huart1,UART_CLEAR_TXFECF);
-           __HAL_UART_CLEAR_IT(&huart1,UART_IT_RXNE);
+        __HAL_UART_CLEAR_OREFLAG(&huart1);
+		
         
-          temp=USART1->ISR;
+        //  temp = USART1->ISR;
           temp = USART1->RDR;
   
 		    
           
 	       UART_Start_Receive_IT(&huart1,inputBuf,1);
           
-           	
-          
-         }
-	  	}
          
-  }
-void USART2_Cmd_Error_Handler(UART_HandleTypeDef *huart)
-{
-   uint32_t temp;
-  if(huart->Instance==USART2){
-    
-
-	  if(run_t.gTimer_usart_error_2 >37){
-	  	run_t.gTimer_usart_error_2=0;
-
-          __HAL_UART_CLEAR_OREFLAG(&huart2);
-          temp= USART2->RDR;
-		    
           
-	   }
-	  }
+      }
+  }
          
 }
+//void USART2_Cmd_Error_Handler(UART_HandleTypeDef *huart)
+//{
+//   uint32_t temp;
+//  if(huart->Instance==USART2){
+//    
+//
+//	  if(run_t.gTimer_usart_error_2 >37){
+//	  	run_t.gTimer_usart_error_2=0;
+//
+//          __HAL_UART_CLEAR_OREFLAG(&huart2);
+//          temp= USART2->RDR;
+//		    
+//          
+//	   }
+//	  }
+//         
+//}
 /********************************************************************************
 	**
 	*Function Name:sendData_Real_TimeHum(uint8_t hum,uint8_t temp)
