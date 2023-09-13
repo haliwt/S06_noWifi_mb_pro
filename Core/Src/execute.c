@@ -16,8 +16,8 @@ void SetPowerOn_ForDoing(void)
   
    run_t.gPower_On=POWER_ON;
 	
-     //FAN_CCW_RUN();
-	run_t.gFan = 1;
+ 
+	
     run_t.gDry = 1;
 	run_t.gPlasma =1;       //"杀菌"
 	run_t.gUltrasonic = 1; // "驱虫"
@@ -33,7 +33,7 @@ void SetPowerOff_ForDoing(void)
 	run_t.gPower_On = POWER_OFF;
 
  
-    run_t.gFan = 0;
+   
     run_t.gDry = 0;
 	run_t.gPlasma =0;       //"杀菌"
 	run_t.gUltrasonic = 0; // "驱虫"
@@ -66,7 +66,7 @@ void ActionEvent_Handler(void)
 	//kill
 	if(run_t.gPlasma == 1){
 	     PLASMA_SetHigh();
-		 HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);//ultrasnoic ON 
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);//ultrasnoic ON 
 		 
 	}
 	else{
@@ -77,15 +77,8 @@ void ActionEvent_Handler(void)
 	}
 
    if(run_t.fan_warning ==0){
-   if(run_t.gFan ==1){
-      FAN_CCW_RUN();
-  
-   }
-   else{
-     FAN_Stop();
-
-   }
-   }
+     Fan_Run_Fun();
+  }
 			
 }
 

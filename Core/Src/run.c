@@ -51,11 +51,7 @@ void Decode_RunCmd(void)
 	      if(run_t.gPower_On==POWER_ON){
 	      if(cmdType_2==1){//long press key that power key
               //fast blink led for link to tencent cloud
-            
-			
-	      
-			   
-		   }
+           }
 		 }
        
 	   break;
@@ -198,8 +194,8 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 
        case DRY_ON:
          run_t.gDry = 1;
-		 run_t.gFan_by_key_turn_off=0;
-       	 run_t.gFan =1;
+
+    
 		 if(no_buzzer_sound_dry_off==0){
 		  	    Buzzer_KeySound();
 		  }
@@ -228,8 +224,8 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 
        case PLASMA_ON:
        		run_t.gPlasma=1;
-			run_t.gFan_by_key_turn_off=0;
-       	    run_t.gFan =1;
+		
+       	   
 			Buzzer_KeySound();
 	  
 	    
@@ -242,23 +238,34 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 	   
        break;
 
-       case  FAN_ON:
-           run_t.gFan_by_key_turn_off = 0;
-		   run_t.gFan_continueRun=0;
-	       run_t.gFan =1;
+       case  FAN_ON: //this is fan_speed_min, run_t.gFan_level = fan_speed_min;
+	     
+           run_t.gFan_level = fan_speed_min;
 		   Buzzer_KeySound();
       break;
 
-	   case FAN_OFF:
-	   	   run_t.gFan_by_key_turn_off = 1;
-		   run_t.gFan_continueRun=1;
-	   	   run_t.gFan =0;
-		   run_t.gPlasma=0;
-	       run_t.gDry = 0;
+	   case FAN_OFF: //this is fan_speed_max
+	   	 
+	  
+           run_t.gFan_level=fan_speed_max;
 		   Buzzer_KeySound();
 	    
 
 	   break;
+
+       case AI_MODE_ON:
+        run_t.gDry = 1;
+        run_t.gPlasma=1;
+        
+       Buzzer_KeySound();
+
+       break;
+
+       case AI_MODE_OFF:
+          
+          Buzzer_KeySound();
+
+       break;
 
 
       default :
@@ -405,7 +412,7 @@ void RunCommand_MainBoard_Fun(void)
 
 			    case 3:
 				
-				if(run_t.gTimer_fan_adc_times > 72 && run_t.gFan_by_key_turn_off==0){ //2 minute 180s
+				if(run_t.gTimer_fan_adc_times > 72){ //2 minute 180s
 					run_t.gTimer_fan_adc_times =0;
 
 					//Self_CheckFan_Handler(ADC_CHANNEL_0,5);
@@ -436,7 +443,7 @@ void RunCommand_MainBoard_Fun(void)
 
 					if(run_t.gFan_counter < 60){
 
-					   FAN_CCW_RUN();
+					   Fan_Run_Fun();
 					}       
 
 					if(run_t.gFan_counter > 59){
@@ -528,7 +535,7 @@ void RunCommand_MainBoard_Fun(void)
 
 					if(run_t.gFan_counter < 60){
 
-					   FAN_CCW_RUN();
+					   Fan_Run_Fun();
 					}       
 
 					if(run_t.gFan_counter > 59){
@@ -576,7 +583,7 @@ static void Fan_ContinueRun_OneMinute_Fun(void)
           
 		if(run_t.gFan_counter < 60){
 
-		    FAN_CCW_RUN();
+		    Fan_CCW_Run_Max();
 		}       
     else if(run_t.gFan_counter > 59){
 

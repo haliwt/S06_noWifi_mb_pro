@@ -107,7 +107,9 @@ void MX_TIM1_Init(void)
 
 }
 /* TIM3 init function */
-void MX_TIM3_Init(void)
+/* fan output PWM */
+/* TIM3 init function */
+void MX_TIM3_Init(uint8_t freq,uint8_t tim,uint8_t duty)
 {
 
   /* USER CODE BEGIN TIM3_Init 0 */
@@ -122,9 +124,9 @@ void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 23;
+  htim3.Init.Prescaler = freq;//24/(11+1)
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 9999;
+  htim3.Init.Period = tim;//100K
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -147,10 +149,10 @@ void MX_TIM3_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
+  sConfigOC.Pulse = duty;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -160,6 +162,7 @@ void MX_TIM3_Init(void)
   HAL_TIM_MspPostInit(&htim3);
 
 }
+
 /* TIM14 init function */
 void MX_TIM14_Init(void)
 {
@@ -188,69 +191,6 @@ void MX_TIM14_Init(void)
 }
 
 
-#if 0
-/* TIM16 init function */
-/* Fan driver frequency value */
-
-void MX_TIM16_Init(void)
-{
-
-  /* USER CODE BEGIN TIM16_Init 0 */
-   //fan frequency
-  /* USER CODE END TIM16_Init 0 */
-
-  TIM_OC_InitTypeDef sConfigOC = {0};
-  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
-
-  /* USER CODE BEGIN TIM16_Init 1 */
-
-  /* USER CODE END TIM16_Init 1 */
-  htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 23;
-  htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = 99;// 10KHZ//F= 1/(49+1)MHZ = 20KHz ,T= 1/F= 1/10= 0.1ms
-  htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim16.Init.RepetitionCounter = 0;
-  htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_PWM_Init(&htim16) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = run_t.gFan_pwm_duty_level;// pwm duty rate.
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-  if (HAL_TIM_PWM_ConfigChannel(&htim16, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
-  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
-  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
-  sBreakDeadTimeConfig.DeadTime = 0;
-  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
-  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
-  sBreakDeadTimeConfig.BreakFilter = 0;
-  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
-  if (HAL_TIMEx_ConfigBreakDeadTime(&htim16, &sBreakDeadTimeConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM16_Init 2 */
-
-  /* USER CODE END TIM16_Init 2 */
-  HAL_TIM_MspPostInit(&htim16);
-
-}
-
-#endif 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
 {
 
@@ -335,40 +275,19 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
 
     __HAL_RCC_GPIOC_CLK_ENABLE();
     /**TIM3 GPIO Configuration
-    PC7     ------> TIM3_CH2
+       PA6     ------> TIM3_CH1
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_7;
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF1_TIM3;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* USER CODE BEGIN TIM3_MspPostInit 1 */
 
   /* USER CODE END TIM3_MspPostInit 1 */
   }
-//  else if(timHandle->Instance==TIM16)
-//  {
-//  /* USER CODE BEGIN TIM16_MspPostInit 0 */
-//
-//  /* USER CODE END TIM16_MspPostInit 0 */
-//
-//    __HAL_RCC_GPIOA_CLK_ENABLE();
-//    /**TIM16 GPIO Configuration
-//    PA6     ------> TIM16_CH1
-//    */
-//    GPIO_InitStruct.Pin = GPIO_PIN_6;
-//    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//    GPIO_InitStruct.Pull = GPIO_NOPULL;
-//    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-//    GPIO_InitStruct.Alternate = GPIO_AF5_TIM16;
-//    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-//
-//  /* USER CODE BEGIN TIM16_MspPostInit 1 */
-//
-//  /* USER CODE END TIM16_MspPostInit 1 */
-//  }
 
 }
 

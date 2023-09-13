@@ -5,7 +5,7 @@
 #define WIFI_TUYA      1  //
 #define AI_ENABLE      1
 
-#define DEBUG          1
+#define DEBUG          0
 
 typedef enum {                   /* enumeration for CProcess signals */
     kill =1,notkill,dry,notdry,ai,notai
@@ -51,8 +51,11 @@ typedef enum{
 	 PLASMA_ON = 0x20,
 	 PLASMA_OFF = 0x21,
 
-     FAN_ON = 0x10,       //ultrasonic
+     FAN_ON = 0x10,       //
      FAN_OFF = 0x11,
+
+     AI_MODE_ON = 0x30,   //EDIT 2023.09.13 new Add
+     AI_MODE_OFF =0x31, 
 
 	 PTC_WARNING= 0xE1,
 	 FAN_WARNING = 0xE2,
@@ -76,6 +79,15 @@ typedef enum{
 
 
 }answering_state;
+
+typedef enum{
+
+   fan_speed_max,
+   fan_speed_min
+
+
+}fan_level_state;
+
 
 
 
@@ -112,11 +124,11 @@ typedef struct _RUN_T{
 	uint8_t open_ptc_detected_flag;
 	
 	//fan 
-	uint8_t  gFan;
 	uint8_t gFan_continueRun;
 	uint8_t  gFan_counter;
     uint8_t gTimer_fan_adc_times;
-	uint8_t gFan_by_key_turn_off;
+    uint8_t gFan_level;
+
 	//adc 
 	uint8_t ADC_channel_No;
       
