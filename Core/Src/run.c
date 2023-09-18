@@ -156,7 +156,8 @@ static void Single_Power_ReceiveCmd(uint8_t cmd)
            Buzzer_KeySound();
         }
 		run_t.buzzer_sound_flag=0;
-		  printf("pon\n");
+        
+		 // printf("pon\n");
         //Answering_Signal_USART1_Handler(COMMAND_ID,ANSWER_POWER_ON);
 		run_t.RunCommand_Label= POWER_ON;
 		
@@ -224,12 +225,25 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 
        case PLASMA_ON:
        		run_t.gPlasma=1;
-		
-       	   
-			Buzzer_KeySound();
+		    Buzzer_KeySound();
 	  
 	    
        break;
+
+       case PLASM_ON_NO_BUZZER:
+     
+           run_t.gPlasma=1;
+
+
+       break;
+
+       case PLASM_OFF_NO_BUZZER:
+          
+           run_t.gPlasma=0;
+
+       break;
+
+       
 
        case PLASMA_OFF:
            run_t.gPlasma=0;
@@ -238,20 +252,30 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
 	   
        break;
 
-       case  FAN_ON: //this is fan_speed_min, run_t.gFan_level = fan_speed_min;
+       case  FAN_LEVEL_MIN: //this is fan_speed_min, run_t.gFan_level = fan_speed_min;
 	     
            run_t.gFan_level = fan_speed_min;
 		   Buzzer_KeySound();
       break;
 
-	   case FAN_OFF: //this is fan_speed_max
-	   	 
-	  
-           run_t.gFan_level=fan_speed_max;
-		   Buzzer_KeySound();
-	    
+      case FAN_LEVEL_MAX:
+         run_t.gFan_level=fan_speed_max;
+         Buzzer_KeySound();
 
-	   break;
+      break;
+
+	   case FAN_LEVEL_MAX_NO_SOUND: //this is fan_speed_max
+	   	 
+	      run_t.gFan_level=fan_speed_max;
+	  break;
+
+       case FAN_STOP:
+         run_t.gFan_level=fan_speed_sotp;
+        // Buzzer_KeySound();
+
+      break;
+
+       
 
        case AI_MODE_ON:
         run_t.gDry = 1;
@@ -266,6 +290,8 @@ static void Single_Command_ReceiveCmd(uint8_t cmd)
           Buzzer_KeySound();
 
        break;
+
+       
 
 
       default :
@@ -415,9 +441,10 @@ void RunCommand_MainBoard_Fun(void)
 				if(run_t.gTimer_fan_adc_times > 72){ //2 minute 180s
 					run_t.gTimer_fan_adc_times =0;
 
-					//Self_CheckFan_Handler(ADC_CHANNEL_0,5);
+				   if(run_t.gFan_level !=fan_speed_sotp){
 					Get_Fan_Adc_Fun(ADC_CHANNEL_0,5);
 					HAL_Delay(10);
+                    }
 
 				}
                   run_state =4;

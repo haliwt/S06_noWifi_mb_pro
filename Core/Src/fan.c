@@ -93,8 +93,14 @@ void Fan_Run_Fun(void)
    if(run_t.gFan_level==fan_speed_max){
       Fan_CCW_Run_Max();
    }
-   else {
+   else if(run_t.gFan_level==fan_speed_min){
       Fan_CCW_Run_Min();
+
+   }
+   else if(run_t.gFan_level==fan_speed_sotp){
+
+        FAN_Stop();
+
 
    }
 

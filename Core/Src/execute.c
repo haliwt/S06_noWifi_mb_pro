@@ -21,6 +21,7 @@ void SetPowerOn_ForDoing(void)
     run_t.gDry = 1;
 	run_t.gPlasma =1;       //"杀菌"
 	run_t.gUltrasonic = 1; // "驱虫"
+	run_t.gFan_level = fan_speed_max;
 	
     
  }

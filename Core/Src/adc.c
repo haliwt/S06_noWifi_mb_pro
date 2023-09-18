@@ -291,7 +291,7 @@ void Get_Fan_Adc_Fun(uint32_t channel,uint8_t times)
 	uint16_t adc_fan_hex;
 	
 	
-   // Fan_CCW_Run_Max();
+   Fan_CCW_Run_Max();
 	adc_fan_hex = Get_Adc_Average(channel,times);
 
     run_t.fan_detect_voltage  =(uint16_t)((adc_fan_hex * 3300)/4096); //amplification 1000 ,3.111V -> 3111
